@@ -1,0 +1,608 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SocialShop</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:#fff;color:#111;max-width:480px;margin:auto;padding-bottom:64px;min-height:100vh}
+button{font-family:inherit;cursor:pointer}
+header{height:54px;background:#fff;border-bottom:1px solid #eee;display:flex;justify-content:space-between;align-items:center;padding:0 14px;position:sticky;top:0;z-index:10}
+.logo{font-size:24px;font-weight:700;font-style:italic;color:#d62976;cursor:pointer}
+.hicons{display:flex;gap:18px;font-size:22px}
+.hicons span{cursor:pointer;position:relative}
+.hicons small{position:absolute;top:-6px;right:-8px;background:#ed4956;color:#fff;border-radius:9px;font-size:10px;padding:1px 5px}
+.title{font-weight:700;font-size:18px;display:flex;align-items:center;gap:6px}
+.back{font-size:26px;cursor:pointer;background:none;border:0}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;height:56px;background:#fff;border-top:1px solid #eee;display:flex;justify-content:space-around;align-items:center;z-index:20}
+nav span{font-size:24px;cursor:pointer;padding:8px;opacity:.55}
+nav span.on{opacity:1}
+nav .me{width:28px;height:28px;border-radius:50%;padding:0;opacity:1;border:2px solid transparent}
+nav .me.on{border-color:#111}
+.stories{display:flex;gap:14px;padding:12px;overflow-x:auto;border-bottom:1px solid #eee}
+.story{text-align:center;font-size:12px;min-width:64px;cursor:pointer}
+.ring{width:62px;height:62px;border-radius:50%;background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);padding:3px;margin:0 auto 4px}
+.ring.none{background:#ddd}
+.ring .av{border:2px solid #fff}
+.av{width:100%;height:100%;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;overflow:hidden}
+.av img{width:100%;height:100%;object-fit:cover}
+.post{margin-bottom:6px}
+.ph{display:flex;align-items:center;gap:10px;padding:10px 12px;font-weight:600;font-size:14px}
+.ph .av{width:34px;height:34px;cursor:pointer;font-size:14px}
+.ph b{cursor:pointer}
+.ph .more{margin-left:auto;font-size:18px}
+.pm{width:100%;aspect-ratio:1;background:#ddd;position:relative;display:flex;align-items:center;justify-content:center;font-size:64px;overflow:hidden;user-select:none}
+.pm img,.pm video{width:100%;height:100%;object-fit:cover}
+.heart{position:absolute;font-size:90px;color:#fff;opacity:0;pointer-events:none;transition:.25s;text-shadow:0 2px 12px rgba(0,0,0,.4)}
+.heart.show{opacity:1;transform:scale(1.15)}
+.pa{display:flex;gap:16px;padding:10px 12px 4px;font-size:24px;align-items:center}
+.pa span{cursor:pointer}
+.pa .liked{color:#ed4956}
+.cap{padding:2px 12px 4px;font-size:14px;line-height:1.4}
+.cmt{padding:0 12px 6px;font-size:13px;color:#777;cursor:pointer}
+.cmt div{color:#111;margin-top:2px}
+.profile{padding:14px}
+.ptop{display:flex;align-items:center;gap:22px}
+.pphoto{width:84px;height:84px;border-radius:50%;padding:3px;background:linear-gradient(45deg,#f09433,#dc2743,#bc1888);flex-shrink:0}
+.pphoto .av{border:3px solid #fff;font-size:30px}
+.stats{display:flex;flex:1;justify-content:space-around;text-align:center;font-size:14px}
+.stats div{cursor:pointer}
+.stats b{display:block;font-size:17px}
+.bio{margin:12px 0;font-size:14px;line-height:1.4}
+.btns{display:flex;gap:8px}
+.btn{flex:1;padding:8px;border:0;border-radius:8px;background:#efefef;font-weight:600;font-size:14px}
+.btn.blue{background:#0095f6;color:#fff}
+.tabs{display:flex;border-top:1px solid #eee;margin-top:14px}
+.tabs span{flex:1;text-align:center;padding:10px;font-size:20px;opacity:.4;cursor:pointer;border-top:2px solid transparent;margin-top:-1px}
+.tabs span.on{opacity:1;border-color:#111}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px}
+.gi{aspect-ratio:3/4;background:#ddd;position:relative;overflow:hidden;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:40px}
+.gi img,.gi video{width:100%;height:100%;object-fit:cover}
+.gi .v{position:absolute;bottom:5px;left:6px;color:#fff;font-size:12px;font-weight:600;text-shadow:0 1px 3px #000}
+.gi .t{position:absolute;top:5px;right:6px;color:#fff;font-size:13px;text-shadow:0 1px 3px #000}
+.search{margin:10px 12px;padding:10px 14px;background:#efefef;border-radius:10px;font-size:14px;color:#777;display:block;border:0;width:calc(100% - 24px)}
+.reel{height:calc(100vh - 110px);position:relative;background:#111;color:#fff;margin-bottom:4px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:90px}
+.reel img,.reel video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.rtxt{position:absolute;bottom:16px;left:14px;right:70px;font-size:14px;text-shadow:0 1px 4px #000}
+.rside{position:absolute;right:12px;bottom:20px;display:flex;flex-direction:column;gap:18px;font-size:26px;text-align:center}
+.rside small{display:block;font-size:12px}
+.rside span{cursor:pointer;text-shadow:0 1px 4px #000}
+.form{padding:14px}
+.form input,.form select,.form textarea{width:100%;padding:10px;margin-bottom:10px;border:1px solid #ddd;border-radius:8px;font:inherit}
+.preview{width:100%;height:300px;background:#f3f3f3;margin-bottom:10px;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;color:#888}
+.preview img,.preview video{width:100%;height:100%;object-fit:cover}
+.sgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:10px}
+.prod{border:1px solid #eee;border-radius:10px;overflow:hidden}
+.pimg{height:150px}
+.pinfo{padding:8px;font-size:14px}
+.price{font-weight:700;margin:4px 0 8px}
+.row{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid #f0f0f0;font-size:14px}
+.row .l{display:flex;align-items:center;gap:12px;cursor:pointer}
+.row .av{width:44px;height:44px;font-size:16px}
+.row .btn{flex:none;padding:6px 16px}
+.empty{text-align:center;padding:40px 20px;color:#888;font-size:14px}
+.chat{padding:14px}
+.msg{padding:9px 13px;border-radius:18px;margin:6px 0;max-width:75%;font-size:14px;background:#efefef}
+.msg.mine{background:#3797f0;color:#fff;margin-left:auto}
+.cbox{display:flex;gap:6px;margin-top:14px}
+.cbox input{flex:1;padding:10px 14px;border:1px solid #ddd;border-radius:20px}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:50;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:#fff;width:100%;max-width:480px;height:70vh;border-radius:16px 16px 0 0;overflow-y:auto}
+.sheet h4{text-align:center;padding:14px;border-bottom:1px solid #eee;position:sticky;top:0;background:#fff}
+.sheet .tabs{margin:0;position:sticky;top:47px;background:#fff}
+.toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:#222;color:#fff;padding:9px 18px;border-radius:20px;font-size:13px;z-index:60}
+
+.utabs{display:flex;border-bottom:1px solid #eee;position:sticky;top:54px;background:#fff;z-index:5}
+.utabs span{flex:1;text-align:center;padding:12px;font-size:14px;font-weight:600;color:#999;cursor:pointer;border-bottom:2px solid transparent}
+.utabs span.on{color:#111;border-color:#111}
+.ptag{display:flex;justify-content:space-between;align-items:center;padding:9px 12px;background:#f5f5f5;font-size:13px;cursor:pointer}
+.ptag b{color:#0095f6}
+.pd-img{width:100%;aspect-ratio:1;background:#ddd;overflow:hidden}
+.pd-img img{width:100%;height:100%;object-fit:cover}
+.pd{padding:14px}
+.pd h2{font-size:20px;margin-bottom:4px}
+.pd .pr{font-size:22px;font-weight:700;margin:6px 0 10px}
+.pd p{font-size:14px;line-height:1.5;color:#444;margin:10px 0}
+.pd .sel{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;margin:10px 0}
+.pd .sel .av{width:34px;height:34px;font-size:13px}
+.story-full{position:fixed;inset:0;background:#000;z-index:80;display:flex;align-items:center;justify-content:center;max-width:480px;margin:auto;color:#fff;font-size:110px}
+.story-full .bar{position:absolute;top:10px;left:10px;right:10px;height:3px;background:rgba(255,255,255,.35);border-radius:2px;overflow:hidden;z-index:2}
+.story-full .bar i{display:block;height:100%;background:#fff;width:0;transition:width 4s linear}
+.story-full .who{position:absolute;top:24px;left:12px;display:flex;align-items:center;gap:10px;font-size:14px;font-weight:600;z-index:2}
+.story-full .who .av{width:34px;height:34px;font-size:13px}
+.story-full .x{position:absolute;top:22px;right:14px;font-size:30px;cursor:pointer;z-index:2}
+.story-full img,.story-full video{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.ocard{display:flex;gap:12px;padding:12px 14px;border-bottom:1px solid #f0f0f0}
+.othumb{width:72px;height:72px;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:30px;flex-shrink:0}
+.othumb img{width:100%;height:100%;object-fit:cover}
+.ob{flex:1;font-size:13px;line-height:1.5}
+.ob .btn{padding:6px;font-size:12px}
+.cbar{position:fixed;bottom:56px;left:50%;transform:translateX(-50%);width:100%;max-width:480px;background:#fff;border-top:1px solid #eee;padding:8px 12px;display:flex;gap:8px;z-index:15}
+.cbar input{flex:1;padding:10px 14px;border:1px solid #ddd;border-radius:20px;font:inherit}
+
+.auth{padding:24px 28px;text-align:center}
+.auth input{width:100%;padding:12px;margin-bottom:10px;border:1px solid #ddd;border-radius:8px;background:#fafafa;font:inherit;font-size:14px}
+.auth .sub{color:#777;font-size:14px;margin-bottom:18px}
+.auth .err{color:#ed4956;font-size:13px;margin:2px 0 10px;min-height:16px;text-align:left}
+.auth .abox{margin-top:22px;padding:16px;border:1px solid #eee;border-radius:8px;font-size:14px}
+.lnk{color:#0095f6;font-weight:600;cursor:pointer}
+.pho{display:flex;gap:8px}.pho span{padding:12px;border:1px solid #ddd;border-radius:8px;background:#fafafa;font-size:14px}
+.pw{position:relative}.pw span{position:absolute;right:12px;top:11px;cursor:pointer}
+.dots{margin-bottom:22px}.dots span{display:inline-block;width:8px;height:8px;border-radius:50%;background:#ddd;margin:0 4px}.dots .on{background:#0095f6}
+body.auth{padding-bottom:0}
+.auth header,.auth nav{display:none}
+.auth-box{padding:30px 28px;text-align:center}
+.auth-box input{width:100%;padding:12px;margin-bottom:10px;border:1px solid #ddd;border-radius:8px;background:#fafafa;font:inherit}
+.auth-box .btn{width:100%;padding:12px}
+.auth-box .logo.big{font-size:42px;margin:30px 0 24px;display:block;cursor:default}
+.auth-box h3{margin-bottom:6px;font-size:20px}
+.auth-box p{color:#777;font-size:14px;margin-bottom:18px}
+.err{color:#ed4956;font-size:13px;min-height:18px;margin-bottom:8px}
+.or{margin:16px 0;color:#999;font-size:13px}
+.lnk{color:#0095f6;font-weight:600;cursor:pointer;font-size:14px;margin-top:20px;display:block}
+.hicons small:empty{display:none}
+</style>
+</head>
+<body>
+<header id="hdr"></header>
+<div id="app"></div>
+<nav id="nav"></nav>
+<script>
+/* ============ CONFIG ============ */
+// Same server serves this page and the API. If the page is hosted elsewhere, set before this script:
+// window.SOCIALSHOP_API = "https://your-backend.onrender.com";
+var API = window.SOCIALSHOP_API || "";
+var G=["linear-gradient(135deg,#ff9a9e,#fecfef)","linear-gradient(135deg,#a1c4fd,#c2e9fb)","linear-gradient(135deg,#fbc2eb,#a6c1ee)","linear-gradient(135deg,#84fab0,#8fd3f4)","linear-gradient(135deg,#f6d365,#fda085)","linear-gradient(135deg,#a18cd1,#fbc2eb)"];
+var TOKEN=localStorage.getItem("ss_token")||"", me=null;
+var cart=[],hist=[],curTab="home",profTab="grid",upType="post",ordersTab="mine",pageTok=0,viewList=[],postCache={},prodCache={},chatLen=0,regPhone="";
+var STAT=["Placed","Confirmed","Shipped","Delivered"],SCOL=["#8e8e8e","#0095f6","#f5a623","#2ecc71"];
+
+/* ============ HELPERS ============ */
+function $(id){return document.getElementById(id)}
+function esc(s){var d=document.createElement("div");d.textContent=s==null?"":s;return d.innerHTML.replace(/"/g,"&quot;")}
+function toast(m){var t=document.createElement("div");t.className="toast";t.textContent=m;document.body.appendChild(t);setTimeout(function(){t.remove()},1800)}
+function U(u){return u&&u.charAt(0)==="/"?API+u:(u||"")}
+function colorOf(s){var h=0;for(var i=0;i<s.length;i++)h=(h*31+s.charCodeAt(i))|0;return G[Math.abs(h)%G.length]}
+function avatar(u){u=u||{};var n=u.username||"?";return '<div class="av" style="background:'+colorOf(n)+'">'+(u.photo?'<img src="'+U(u.photo)+'">':esc(n[0].toUpperCase()))+'</div>'}
+function ago(d){var m=Math.floor((Date.now()-new Date(d))/60000);if(m<1)return"now";if(m<60)return m+"m";if(m<1440)return Math.floor(m/60)+"h";return Math.floor(m/1440)+"d"}
+async function api(path,opt){
+  opt=opt||{};var h={},body;
+  if(TOKEN)h.Authorization="Bearer "+TOKEN;
+  if(opt.form)body=opt.form;else if(opt.body){h["Content-Type"]="application/json";body=JSON.stringify(opt.body)}
+  var r=await fetch(API+"/api"+path,{method:opt.method||(body?"POST":"GET"),headers:h,body:body});
+  var d=null;try{d=await r.json()}catch(e){}
+  if(r.status===401&&TOKEN&&path.indexOf("/auth/login")!==0){doLogout(true);throw new Error("Please log in again")}
+  if(!r.ok)throw new Error((d&&d.error)||"Something went wrong");
+  return d;
+}
+function loading(){$("app").innerHTML='<div class="empty">Loading…</div>'}
+function fail(e){toast(e.message);$("app").innerHTML='<div class="empty">'+esc(e.message)+'<br><br><button class="btn" style="width:auto;padding:8px 20px" onclick="goBack()">Go back</button></div>'}
+function setHeader(h){window.view="";$("hdr").innerHTML=h}
+function setNav(t){
+  curTab=t;
+  var it=[["home","🏠","homePage"],["search","🔍","explorePage"],["add","➕","uploadPage"],["reels","🎬","reelsPage"]],h="";
+  it.forEach(function(i){h+='<span class="'+(t===i[0]?"on":"")+'" onclick="go('+i[2]+')">'+i[1]+'</span>'});
+  h+='<span class="me '+(t==="profile"?"on":"")+'" onclick="go(profilePage,me.username)">'+avatar(me)+'</span>';
+  $("nav").innerHTML=h;
+}
+function go(fn,arg){hist=[];fn(arg)}
+function push(fn,arg){hist.push({fn:fn,arg:arg})}
+function goBack(){var h=hist.pop();if(!h){homePage();return}h.fn(h.arg)}
+function backHeader(title){setHeader('<button class="back" onclick="goBack()">‹</button><div class="title">'+title+'</div><div style="width:26px"></div>')}
+function mainHeader(){
+  setHeader('<div class="logo" onclick="go(homePage)">SocialShop</div><div class="hicons"><span onclick="push(homePage);shopPage()">🛍️</span><span onclick="push(homePage);cartPage()">🛒<small id="cc"></small></span><span onclick="push(homePage);ordersPage()">📦<small id="oc"></small></span><span onclick="push(homePage);inboxPage()">💬<small id="mc"></small></span></div>');
+  updateCart();refreshBadges();
+}
+function updateCart(){var c=$("cc");if(c)c.textContent=cart.length||""}
+function setBadges(b){var o=$("oc"),m=$("mc");if(o)o.textContent=b.orders||"";if(m)m.textContent=b.messages||""}
+async function refreshBadges(){try{setBadges(await api("/badges"))}catch(e){}}
+
+/* ============ LOGIN / REGISTER ============ */
+function authShell(inner){document.body.classList.add("auth");setHeader("");$("nav").innerHTML="";$("app").innerHTML='<div class="auth-box"><span class="logo big">SocialShop</span>'+inner+'</div>'}
+function authErr(m){$("err").textContent=m}
+function loginPage(){
+  authShell('<input id="lu" placeholder="Phone number or username" autocapitalize="none"><input id="lp" type="password" placeholder="Password" onkeydown="if(event.key===\'Enter\')doLogin()"><div class="err" id="err"></div>'+
+  '<button class="btn blue" onclick="doLogin()">Log in</button><div class="or">OR</div><button class="btn" onclick="regPage(1)">Create new account</button>');
+}
+function saveSession(d){TOKEN=d.token;me=d.user;localStorage.setItem("ss_token",TOKEN)}
+async function doLogin(){
+  var id=$("lu").value.trim(),pw=$("lp").value;
+  if(!id||!pw){authErr("Enter your username/phone and password");return}
+  try{saveSession(await api("/auth/login",{body:{id:id,password:pw}}));enterApp()}catch(e){authErr(e.message)}
+}
+function regPage(step){
+  if(step===1){
+    authShell('<h3>Create account</h3><p>Enter your mobile number</p><input id="rp" type="tel" inputmode="numeric" maxlength="10" placeholder="Mobile number (10 digits)" onkeydown="if(event.key===\'Enter\')regNext()"><div class="err" id="err"></div>'+
+    '<button class="btn blue" onclick="regNext()">Next</button><span class="lnk" onclick="loginPage()">Already have an account? Log in</span>');
+    if(regPhone)$("rp").value=regPhone;
+  }else{
+    authShell('<h3>Set up your profile</h3><p>Step 2 of 2 · +91 '+esc(regPhone)+'</p><input id="rn" placeholder="Full name"><input id="ru" placeholder="Username" autocapitalize="none"><input id="rw" type="password" placeholder="Password (min 6 characters)"><div class="err" id="err"></div>'+
+    '<button class="btn blue" onclick="doRegister()">Create account</button><span class="lnk" onclick="regPage(1)">‹ Change number</span>');
+  }
+}
+async function regNext(){
+  var p=$("rp").value.trim();
+  try{await api("/auth/check-phone",{body:{phone:p}});regPhone=p;regPage(2)}catch(e){authErr(e.message)}
+}
+async function doRegister(){
+  try{
+    saveSession(await api("/auth/register",{body:{phone:regPhone,name:$("rn").value,username:$("ru").value,password:$("rw").value}}));
+    regPhone="";enterApp();toast("Welcome, "+me.name+"!");
+  }catch(e){authErr(e.message)}
+}
+function enterApp(){document.body.classList.remove("auth");cart=[];go(homePage)}
+function doLogout(silent){
+  if(!silent&&!confirm("Log out of @"+me.username+"?"))return;
+  TOKEN="";me=null;cart=[];localStorage.removeItem("ss_token");hist=[];loginPage();
+}
+
+/* ============ HOME ============ */
+async function homePage(){
+  setNav("home");mainHeader();hist=[];loading();var t=++pageTok;
+  try{
+    var posts=await api("/posts/feed");if(t!==pageTok)return;
+    viewList=posts;
+    var seen={},h='<div class="stories"><div class="story" onclick="myStory()"><div class="ring none">'+avatar(me)+'</div>Your story</div>';
+    posts.forEach(function(p){var n=p.user.username;if(n!==me.username&&!seen[n]){seen[n]=1;h+='<div class="story" onclick="storyView(\''+p.id+'\')"><div class="ring">'+avatar(p.user)+'</div>'+n+'</div>'}});
+    h+='</div>';
+    if(posts.length)posts.forEach(function(p){h+=postHTML(p)});
+    else{
+      h+='<div class="empty"><div style="font-size:48px">📷</div><b style="font-size:18px;color:#111">Welcome to SocialShop</b><br>Share your first photo or follow people to fill your feed.<br><br><button class="btn blue" style="width:auto;padding:10px 24px" onclick="go(uploadPage)">Share your first post</button></div>';
+      var sug=await api("/users/suggestions");if(t!==pageTok)return;
+      if(sug.length){
+        h+='<div style="padding:8px 14px;font-weight:700;font-size:14px">Suggested for you</div>';
+        sug.forEach(function(u){h+='<div class="row"><div class="l" onclick="openUser(\''+u.username+'\')">'+avatar(u)+'<div><b>'+u.username+'</b><br><small style="color:#777">'+esc(u.name)+'</small></div></div><button class="btn blue" onclick="followThen(\''+u.username+'\')">Follow</button></div>'});
+      }
+    }
+    $("app").innerHTML=h;
+  }catch(e){fail(e)}
+}
+async function followThen(u){try{await api("/users/"+u+"/follow",{method:"POST"});homePage()}catch(e){toast(e.message)}}
+function myStory(){var p=viewList.find(function(x){return x.user.username===me.username});if(p)storyView(p.id);else go(uploadPage)}
+function postHTML(p){
+  postCache[p.id]=p;
+  var c;
+  if(p.comments.length){var l=p.comments[p.comments.length-1];
+    c='<div class="cmt" onclick="addComment(\''+p.id+'\')">View all '+p.comments.length+' comment'+(p.comments.length>1?"s":"")+'<div><b>'+l.user.username+'</b> '+esc(l.text)+'</div></div>';
+  }else c='<div class="cmt" onclick="addComment(\''+p.id+'\')">Add a comment…</div>';
+  return '<div class="post" id="post'+p.id+'">'+
+  '<div class="ph" onclick="openUser(\''+p.user.username+'\')">'+avatar(p.user)+'<b>'+p.user.username+'</b><span class="more" onclick="event.stopPropagation();moreMenu(\''+p.id+'\')">⋯</span></div>'+
+  '<div class="pm" style="background:#000" ondblclick="like(\''+p.id+'\',true)">'+media(p,true)+'<div class="heart" id="h'+p.id+'">❤</div></div>'+
+  (p.product?'<div class="ptag" onclick="push(homePage);productPage(\''+p.product.id+'\')"><span>🛍️ '+esc(p.product.name)+' · <b>₹'+p.product.price+'</b></span><span>View product ›</span></div>':'')+
+  '<div class="pa"><span id="l'+p.id+'" class="'+(p.liked?"liked":"")+'" onclick="like(\''+p.id+'\')">'+(p.liked?"♥":"♡")+'</span><span onclick="addComment(\''+p.id+'\')">💬</span><span onclick="toast(\'Link copied\')">✈️</span><span style="margin-left:auto" onclick="savePost(\''+p.id+'\')">'+(p.saved?"🔖":"🏷️")+'</span></div>'+
+  '<div class="cap"><b id="n'+p.id+'">'+p.likesCount+' like'+(p.likesCount===1?"":"s")+'</b><br><b>'+p.user.username+'</b> '+esc(p.caption)+'</div>'+c+'</div>';
+}
+function media(p,controls){
+  return p.isVideo?'<video src="'+U(p.mediaUrl)+'" '+(controls?'controls':'muted')+' playsinline></video>':'<img src="'+U(p.mediaUrl)+'">';
+}
+function openUser(u){push(homePage);profilePage(u)}
+async function like(id,dbl){
+  var p=postCache[id];
+  if(dbl){var h=$("h"+id);if(h){h.classList.add("show");setTimeout(function(){h.classList.remove("show")},600)}if(p.liked)return}
+  try{
+    var d=await api("/posts/"+id+"/like",{method:"POST"});
+    p.liked=d.liked;p.likesCount=d.likesCount;
+    var l=$("l"+id);if(l){l.className=p.liked?"liked":"";l.textContent=p.liked?"♥":"♡"}
+    var n=$("n"+id);if(n)n.textContent=p.likesCount+" like"+(p.likesCount===1?"":"s");
+    var rl=$("rl"+id);if(rl)rl.textContent=p.liked?"♥":"♡";
+  }catch(e){toast(e.message)}
+}
+async function savePost(id){
+  try{var d=await api("/posts/"+id+"/save",{method:"POST"});postCache[id].saved=d.saved;toast(d.saved?"Saved":"Removed from saved");refreshPost(id)}catch(e){toast(e.message)}
+}
+function refreshPost(id){var e=$("post"+id);if(e){var t=document.createElement("div");t.innerHTML=postHTML(postCache[id]);e.replaceWith(t.firstChild)}}
+async function addComment(id){
+  var t=prompt("Add a comment");if(!t||!t.trim())return;
+  try{postCache[id]=await api("/posts/"+id+"/comments",{body:{text:t.trim()}});refreshPost(id)}catch(e){toast(e.message)}
+}
+async function moreMenu(id){
+  var p=postCache[id];
+  if(p.user.username!==me.username){toast("Reported");return}
+  if(!confirm("Delete this "+p.type+"?"))return;
+  try{await api("/posts/"+id,{method:"DELETE"});if(curTab==="home")homePage();else profilePage(me.username)}catch(e){toast(e.message)}
+}
+function storyView(id){
+  var ps=postCache[id];if(!ps)return;
+  var d=document.createElement("div");d.className="story-full";
+  d.innerHTML='<div class="bar"><i></i></div><div class="who">'+avatar(ps.user)+'<span>'+ps.user.username+'</span></div><span class="x">✕</span>'+media(ps);
+  document.body.appendChild(d);
+  var t,close=function(){clearTimeout(t);d.remove()};
+  d.querySelector(".x").onclick=close;
+  setTimeout(function(){d.querySelector(".bar i").style.width="100%"},30);
+  t=setTimeout(close,4000);
+}
+
+/* ============ EXPLORE ============ */
+var searchTimer;
+function explorePage(){
+  setNav("search");hist=[];
+  setHeader('<div class="title" style="flex:1"><input class="search" style="margin:0;width:100%" placeholder="🔍 Search people or posts" oninput="doSearch(this.value)"></div>');
+  $("app").innerHTML='<div id="sres"></div><div id="egrid"><div class="empty">Loading…</div></div>';
+  loadExplore("");
+}
+async function loadExplore(q){
+  var t=++pageTok;
+  try{
+    var posts=await api("/posts/explore"+(q?"?q="+encodeURIComponent(q):""));if(t!==pageTok)return;
+    viewList=posts;posts.forEach(function(p){postCache[p.id]=p});
+    var g=$("egrid");if(!g)return;
+    if(!posts.length){g.innerHTML='<div class="empty">'+(q?"No posts found.":"Nothing to explore yet.<br>Posts from everyone will appear here.")+'</div>';return}
+    var h='<div class="grid">';
+    posts.forEach(function(p){h+='<div class="gi" style="background:#000" onclick="push(explorePage);viewer(\''+p.id+'\')">'+media(p)+(p.type==="reel"?'<div class="t">🎬</div>':"")+'<div class="v">♥ '+p.likesCount+'</div></div>'});
+    g.innerHTML=h+'</div>';
+  }catch(e){var g2=$("egrid");if(g2)g2.innerHTML='<div class="empty">'+esc(e.message)+'</div>'}
+}
+function doSearch(q){
+  clearTimeout(searchTimer);q=q.trim();
+  searchTimer=setTimeout(async function(){
+    try{
+      var h="";
+      if(q){(await api("/users/search?q="+encodeURIComponent(q))).forEach(function(u){h+='<div class="row"><div class="l" onclick="push(explorePage);profilePage(\''+u.username+'\')">'+avatar(u)+'<div><b>'+u.username+'</b><br><small style="color:#777">'+esc(u.name)+'</small></div></div></div>'})}
+      var s=$("sres");if(s)s.innerHTML=h;
+    }catch(e){}
+    loadExplore(q);
+  },300);
+}
+function viewer(id){
+  backHeader("Posts");
+  var h="";viewList.forEach(function(x){h+=postHTML(x)});
+  $("app").innerHTML=h;
+  var e=$("post"+id);if(e)e.scrollIntoView();
+}
+
+/* ============ REELS ============ */
+async function reelsPage(){
+  setNav("reels");hist=[];setHeader('<div class="title">Reels</div><div></div>');loading();var t=++pageTok;
+  try{
+    var list=await api("/posts/reels");if(t!==pageTok)return;
+    var h="";
+    list.forEach(function(p){
+      postCache[p.id]=p;
+      h+='<div class="reel" ondblclick="like(\''+p.id+'\',true)">'+media(p,true)+
+      '<div class="rside"><span onclick="like(\''+p.id+'\')"><span id="rl'+p.id+'">'+(p.liked?"♥":"♡")+'</span></span><span onclick="addComment(\''+p.id+'\')">💬</span><span onclick="toast(\'Link copied\')">✈️</span></div>'+
+      '<div class="rtxt"><b onclick="openUser(\''+p.user.username+'\')" style="cursor:pointer">@'+p.user.username+'</b><br>'+esc(p.caption)+'</div></div>';
+    });
+    $("app").innerHTML=h||'<div class="empty">No reels yet.<br>Tap ➕ then REEL to create one.</div>';
+  }catch(e){fail(e)}
+}
+
+/* ============ UPLOAD ============ */
+function uploadPage(t){
+  setNav("add");hist=[];pageTok++;
+  upType=(t==="post"||t==="reel"||t==="product")?t:upType;
+  setHeader('<div class="title">New '+upType+'</div><div></div>');
+  var h='<div class="utabs">'+["post","reel","product"].map(function(x){return '<span class="'+(upType===x?"on":"")+'" onclick="uploadPage(\''+x+'\')">'+x.toUpperCase()+'</span>'}).join("")+'</div>'+
+  '<div class="form"><input type="file" id="file" accept="'+(upType==="product"?"image/*":"image/*,video/*")+'" onchange="previewFile()"><div class="preview" id="preview">'+(upType==="product"?"Select a product photo":"Select a photo or video")+'</div>';
+  if(upType==="product")h+='<input id="pname" placeholder="Product name"><input id="pprice" type="number" min="1" placeholder="Price in ₹"><textarea id="pdesc" placeholder="Describe your product (size, colour, condition…)" rows="3"></textarea>';
+  else h+='<textarea id="caption" placeholder="Write a caption…" rows="3"></textarea>';
+  h+='<button class="btn blue" id="ubtn" style="width:100%;padding:12px" onclick="uploadFile()">'+(upType==="product"?"List product":"Share")+'</button></div>';
+  $("app").innerHTML=h;
+}
+function previewFile(){
+  var f=$("file").files[0];if(!f)return;
+  var u=URL.createObjectURL(f);
+  $("preview").innerHTML=f.type.indexOf("video")===0?'<video src="'+u+'" controls></video>':'<img src="'+u+'">';
+}
+async function uploadFile(){
+  var f=$("file").files[0];
+  if(!f){alert("Please select a file");return}
+  var fd=new FormData(),b=$("ubtn");
+  if(upType==="product"){
+    if(!$("pname").value.trim()){alert("Enter the product name");return}
+    if(!parseInt($("pprice").value,10)){alert("Enter a valid price");return}
+    fd.append("image",f);fd.append("name",$("pname").value);fd.append("price",$("pprice").value);fd.append("description",$("pdesc").value);
+  }else{fd.append("media",f);fd.append("type",upType);fd.append("caption",$("caption").value)}
+  b.disabled=true;b.textContent="Uploading…";
+  try{
+    var d=await api(upType==="product"?"/products":"/posts",{form:fd});
+    toast(upType==="product"?"Product listed":"Shared!");hist=[];
+    if(upType==="product")productPage(d.id);else if(upType==="reel")reelsPage();else homePage();
+  }catch(e){toast(e.message);b.disabled=false;b.textContent=upType==="product"?"List product":"Share"}
+}
+
+/* ============ PROFILE ============ */
+async function profilePage(u,tab){
+  u=u||me.username;
+  if(tab)profTab=tab;else if(u!==window._lastProf)profTab="grid";
+  window._lastProf=u;
+  var mine=u===me.username;
+  setNav(mine?"profile":curTab);
+  setHeader(mine?'<div class="title" style="flex:1">'+u+' ▾</div><span style="font-size:22px;cursor:pointer;margin-right:16px" onclick="go(uploadPage)">＋</span><span style="font-size:22px;cursor:pointer" onclick="doLogout()">☰</span>':
+    '<button class="back" onclick="goBack()">‹</button><div class="title">'+u+'</div><div style="width:26px"></div>');
+  loading();var t=++pageTok;
+  try{
+    var info=await api("/users/"+u);
+    var items=profTab==="shop"?await api("/products/user/"+u):await api("/posts/user/"+u+(profTab==="reels"?"?type=reel":""));
+    if(t!==pageTok)return;
+    var h='<div class="profile"><div class="ptop"><div class="pphoto">'+avatar(info)+'</div><div class="stats">'+
+    '<div><b>'+info.postsCount+'</b>posts</div>'+
+    '<div onclick="listModal(\''+u+'\',\'followers\')"><b>'+info.followersCount+'</b>followers</div>'+
+    '<div onclick="listModal(\''+u+'\',\'following\')"><b>'+info.followingCount+'</b>following</div></div></div>'+
+    '<div class="bio"><b>'+esc(info.name)+'</b>'+(info.bio?'<br>'+esc(info.bio).replace(/\n/g,"<br>"):"")+'</div>'+
+    '<div class="btns">'+(mine?'<button class="btn" onclick="editProfile()">Edit profile</button><button class="btn" onclick="toast(\'Profile link copied\')">Share profile</button>':
+    '<button class="btn '+(info.isFollowing?"":"blue")+'" onclick="toggleFollow(\''+u+'\',true)">'+(info.isFollowing?"Following":"Follow")+'</button><button class="btn" onclick="push(profilePage,\''+u+'\');openChat(\''+u+'\')">Message</button>')+'</div>'+
+    '<div class="tabs">'+[["grid","▦"],["reels","🎬"],["shop","🛍️"]].map(function(x){return '<span class="'+(profTab===x[0]?"on":"")+'" onclick="profilePage(\''+u+'\',\''+x[0]+'\')">'+x[1]+'</span>'}).join("")+'</div></div>';
+    if(profTab==="shop"){
+      if(!items.length)h+='<div class="empty">'+(mine?"You have not listed any products.<br>Tap ＋ then PRODUCT to sell.":"No products listed.")+'</div>';
+      else{h+='<div class="grid">';items.forEach(function(p){prodCache[p.id]=p;h+='<div class="gi" style="background:#000" onclick="push(profilePage,\''+u+'\');productPage(\''+p.id+'\')"><img src="'+U(p.imageUrl)+'"><div class="v">₹'+p.price+'</div></div>'});h+='</div>'}
+    }else{
+      viewList=items;
+      if(!items.length)h+='<div class="empty"><div style="font-size:40px">📷</div>'+(mine?"Share your first "+(profTab==="reels"?"reel":"photo")+".<br>Tap ＋ to get started.":"No "+(profTab==="reels"?"reels":"posts")+" yet.")+'</div>';
+      else{h+='<div class="grid">';items.forEach(function(p){postCache[p.id]=p;h+='<div class="gi" style="background:#000" onclick="push(profilePage,\''+u+'\');viewer(\''+p.id+'\')">'+media(p)+(p.type==="reel"?'<div class="t">🎬</div>':(p.product?'<div class="t">🛍️</div>':""))+'</div>'});h+='</div>'}
+    }
+    $("app").innerHTML=h;
+  }catch(e){fail(e)}
+}
+function editProfile(){
+  backHeader("Edit profile");pageTok++;
+  $("app").innerHTML='<div class="form" style="text-align:center"><div class="pphoto" id="ep" style="margin:10px auto">'+avatar(me)+'</div>'+
+  '<label style="color:#0095f6;font-weight:600;cursor:pointer;display:block;margin-bottom:16px">Change profile photo<input type="file" id="ephoto" accept="image/*" style="display:none" onchange="var f=this.files[0];if(f)$(\'ep\').innerHTML=\'<div class=av><img src=\'+URL.createObjectURL(f)+\'></div>\'"></label>'+
+  '<input id="en" value="'+esc(me.name)+'" placeholder="Name"><textarea id="eb" rows="3" placeholder="Bio">'+esc(me.bio||"")+'</textarea>'+
+  '<button class="btn blue" style="width:100%;padding:12px" onclick="saveProfile()">Save</button></div>';
+}
+async function saveProfile(){
+  var fd=new FormData();fd.append("name",$("en").value);fd.append("bio",$("eb").value);
+  var f=$("ephoto").files[0];if(f)fd.append("photo",f);
+  try{var d=await api("/users/me",{method:"PUT",form:fd});me.name=d.name;me.bio=d.bio;me.photo=d.photo;hist=[];profilePage(me.username)}catch(e){toast(e.message)}
+}
+async function toggleFollow(u,rerender){
+  try{await api("/users/"+u+"/follow",{method:"POST"});if(rerender)profilePage(u)}catch(e){toast(e.message)}
+}
+async function listModal(u,tab){
+  try{
+    var r=await Promise.all([api("/users/"+u+"/"+tab),api("/users/"+me.username+"/following")]);
+    var data=r[0],mineF=r[1].map(function(x){return x.username});
+    var h='<div class="modal" onclick="if(event.target===this)this.remove()"><div class="sheet"><h4>'+u+'</h4>'+
+    '<div class="tabs"><span class="'+(tab==="followers"?"on":"")+'" onclick="this.closest(\'.modal\').remove();listModal(\''+u+'\',\'followers\')">Followers</span>'+
+    '<span class="'+(tab==="following"?"on":"")+'" onclick="this.closest(\'.modal\').remove();listModal(\''+u+'\',\'following\')">Following</span></div>';
+    if(!data.length)h+='<div class="empty">'+(tab==="followers"?"No followers yet.":"Not following anyone yet.")+'</div>';
+    data.forEach(function(x){
+      var f=mineF.indexOf(x.username)>-1;
+      h+='<div class="row"><div class="l" onclick="this.closest(\'.modal\').remove();push(profilePage,\''+u+'\');profilePage(\''+x.username+'\')">'+avatar(x)+'<div><b>'+x.username+'</b><br><small style="color:#777">'+esc(x.name)+'</small></div></div>'+
+      (x.username===me.username?"":'<button class="btn '+(f?"":"blue")+'" onclick="toggleFollow(\''+x.username+'\').then(function(){document.querySelector(\'.modal\').remove();listModal(\''+u+'\',\''+tab+'\')})">'+(f?"Following":"Follow")+'</button>')+'</div>';
+    });
+    document.body.insertAdjacentHTML("beforeend",h+'</div></div>');
+  }catch(e){toast(e.message)}
+}
+
+/* ============ SHOP / CART ============ */
+async function shopPage(){
+  setHeader('<button class="back" onclick="goBack()">‹</button><div class="title">Shop</div><span style="font-size:22px;cursor:pointer" onclick="go(uploadPage,\'product\')">＋</span>');
+  loading();var t=++pageTok;
+  try{
+    var list=await api("/products");if(t!==pageTok)return;
+    if(!list.length){$("app").innerHTML='<div class="empty"><div style="font-size:40px">🛍️</div>No products yet.<br>Tap ＋ to list the first one.</div>';return}
+    var h='<div class="sgrid">';
+    list.forEach(function(p){
+      prodCache[p.id]=p;
+      h+='<div class="prod"><div class="pimg" style="background:#000;cursor:pointer;overflow:hidden" onclick="push(shopPage);productPage(\''+p.id+'\')"><img src="'+U(p.imageUrl)+'" style="width:100%;height:100%;object-fit:cover"></div>'+
+      '<div class="pinfo">'+esc(p.name)+'<div class="price">₹'+p.price+'</div><small style="color:#888">@'+p.seller.username+'</small><br><br><button class="btn blue" style="width:100%" onclick="addCart(\''+p.id+'\')">Add to cart</button></div></div>';
+    });
+    $("app").innerHTML=h+'</div>';
+  }catch(e){fail(e)}
+}
+async function productPage(id){
+  backHeader("Product");loading();var t=++pageTok;
+  try{
+    var p=await api("/products/"+id);if(t!==pageTok)return;prodCache[p.id]=p;
+    var own=p.seller.username===me.username;
+    $("app").innerHTML='<div class="pd-img" style="background:#000"><img src="'+U(p.imageUrl)+'"></div>'+
+    '<div class="pd"><h2>'+esc(p.name)+'</h2><div class="pr">₹'+p.price+'</div>'+
+    '<div class="sel" onclick="push(shopPage);profilePage(\''+p.seller.username+'\',\'shop\')">'+avatar(p.seller)+'<span>Sold by <b>'+p.seller.username+'</b></span></div>'+
+    (p.description?'<p>'+esc(p.description)+'</p>':"")+
+    (own?'<button class="btn" style="width:100%;color:#ed4956" onclick="deleteProduct(\''+p.id+'\')">Remove listing</button>':
+    '<div class="btns"><button class="btn" onclick="addCart(\''+p.id+'\')">Add to cart</button><button class="btn blue" onclick="addCart(\''+p.id+'\');push(shopPage);cartPage()">Buy now</button></div><button class="btn" style="width:100%;margin-top:10px" onclick="push(productPage,\''+p.id+'\');openChat(\''+p.seller.username+'\')">Message seller</button>')+'</div>';
+  }catch(e){fail(e)}
+}
+async function deleteProduct(id){
+  if(!confirm("Remove this product?"))return;
+  try{await api("/products/"+id,{method:"DELETE"});cart=cart.filter(function(c){return c!==id});hist=[];shopPage()}catch(e){toast(e.message)}
+}
+function addCart(id){
+  var p=prodCache[id];
+  if(p&&p.seller.username===me.username){toast("You can't buy your own product");return}
+  cart.push(id);updateCart();toast("Added to cart");
+}
+function cartPage(){
+  backHeader("Your cart");pageTok++;
+  var h="",t=0;
+  if(!cart.length)h='<div class="empty">Your cart is empty 🛒</div>';
+  else{
+    cart.forEach(function(id){var p=prodCache[id];if(!p)return;t+=p.price;h+='<div class="row"><span>'+esc(p.name)+'</span><b>₹'+p.price+'</b></div>'});
+    h+='<div class="row"><b>Total</b><b>₹'+t+'</b></div><div style="padding:14px"><button class="btn blue" style="width:100%;padding:12px" onclick="order()">Place order</button></div>';
+  }
+  $("app").innerHTML=h;
+}
+async function order(){
+  if(!cart.length)return;
+  var a=prompt("Delivery address");
+  if(!a||!a.trim()){alert("Please enter a delivery address");return}
+  try{await api("/orders",{body:{items:cart,address:a.trim()}});cart=[];updateCart();toast("Order placed ✅");hist=[];ordersPage("mine")}catch(e){toast(e.message)}
+}
+
+/* ============ ORDERS ============ */
+async function advanceOrder(id){try{await api("/orders/"+id+"/status",{method:"PATCH"});ordersPage()}catch(e){toast(e.message)}}
+async function ordersPage(tab){
+  ordersTab=tab||ordersTab;
+  backHeader("Orders");window.view="orders";loading();var t=++pageTok;
+  try{
+    var r=await Promise.all([api("/orders/mine"),api("/orders/received")]);if(t!==pageTok)return;
+    var mine=r[0],recv=r[1],list=ordersTab==="mine"?mine:recv;
+    var h='<div class="utabs"><span class="'+(ordersTab==="mine"?"on":"")+'" onclick="ordersPage(\'mine\')">MY ORDERS ('+mine.length+')</span><span class="'+(ordersTab==="recv"?"on":"")+'" onclick="ordersPage(\'recv\')">RECEIVED ('+recv.length+')</span></div>';
+    if(!list.length)h+='<div class="empty">'+(ordersTab==="mine"?"You have not ordered anything yet.<br>Visit the 🛍️ Shop to buy.":"No one has ordered your products yet.<br>List a product with ＋ → PRODUCT.")+'</div>';
+    list.forEach(function(o){
+      var other=ordersTab==="mine"?o.seller:o.buyer;
+      var trk=STAT.map(function(s,i){return '<span style="color:'+(i<=o.status?SCOL[o.status]:"#bbb")+';font-weight:'+(i===o.status?700:400)+'">'+(i<=o.status?"●":"○")+' '+s+'</span>'}).join(" ");
+      h+='<div class="ocard"><div class="othumb" style="background:#000"><img src="'+U(o.imageUrl)+'"></div><div class="ob"><b>'+esc(o.name)+'</b> · ₹'+o.price+'<br>'+
+      '<span style="color:#777">Order #'+o.number+' · '+new Date(o.createdAt).toLocaleString([],{day:"numeric",month:"short",hour:"2-digit",minute:"2-digit"})+'</span><br>'+
+      (ordersTab==="mine"?"Seller: ":"Buyer: ")+'<b style="cursor:pointer" onclick="push(ordersPage);profilePage(\''+other.username+'\')">@'+other.username+'</b>'+
+      (ordersTab==="recv"?'<br><span style="color:#777">📍 '+esc(o.address)+'</span>':"")+
+      '<div style="font-size:11px;margin:6px 0">'+trk+'</div><div class="btns">'+
+      (ordersTab==="recv"&&o.status<3?'<button class="btn blue" onclick="advanceOrder(\''+o.id+'\')">Mark '+STAT[o.status+1]+'</button>':"")+
+      '<button class="btn" onclick="push(ordersPage);openChat(\''+other.username+'\')">Message</button></div></div></div>';
+    });
+    $("app").innerHTML=h;
+    await api("/orders/seen",{body:{tab:ordersTab==="recv"?"received":"mine"}});refreshBadges();
+  }catch(e){fail(e)}
+}
+
+/* ============ MESSAGES ============ */
+function bubble(m){return '<div class="msg'+(m.mine?" mine":"")+'">'+esc(m.text)+'</div>'}
+async function inboxPage(silent){
+  if(!silent){backHeader("Messages");loading()}
+  var t=++pageTok;
+  try{
+    var r=await Promise.all([api("/messages/inbox"),api("/users/"+me.username+"/following")]);
+    if(t!==pageTok||(silent===true&&window.view!=="inbox"))return;
+    window.view="inbox";
+    var h="";
+    if(r[1].length)h+='<div class="stories">'+r[1].map(function(u){return '<div class="story" onclick="push(inboxPage);openChat(\''+u.username+'\')"><div class="ring none">'+avatar(u)+'</div>'+u.username+'</div>'}).join("")+'</div>';
+    if(!r[0].length)h+='<div class="empty">'+(r[1].length?"No messages yet.<br>Tap a person above to start a chat.":"No messages yet.<br>Follow people, then message them from their profile.")+'</div>';
+    r[0].forEach(function(c){
+      var un=c.unread;
+      h+='<div class="row" style="cursor:pointer" onclick="push(inboxPage);openChat(\''+c.user.username+'\')"><div class="l">'+avatar(c.user)+'<div><span style="'+(un?"font-weight:700":"")+'">'+c.user.username+'</span><br><small style="color:'+(un?"#111":"#888")+';'+(un?"font-weight:600":"")+'">'+(c.lastFromMe?"You: ":"")+esc(c.lastMessage.slice(0,34))+' · '+ago(c.lastAt)+'</small></div></div>'+(un?'<span style="width:10px;height:10px;border-radius:50%;background:#0095f6"></span>':"")+'</div>';
+    });
+    $("app").innerHTML=h;
+  }catch(e){if(silent!==true)fail(e)}
+}
+async function openChat(u){
+  setHeader('<button class="back" onclick="goBack()">‹</button><div class="title" style="cursor:pointer;gap:8px" onclick="push(inboxPage);profilePage(\''+u+'\')"><div style="width:30px;height:30px">'+avatar({username:u})+'</div>'+u+'</div><div style="width:26px"></div>');
+  window.view="chat:"+u;loading();var t=++pageTok;
+  try{
+    var msgs=await api("/messages/"+u);if(t!==pageTok)return;
+    chatLen=msgs.length;
+    $("app").innerHTML='<div class="chat" style="padding-bottom:80px"><div id="msgs">'+msgs.map(bubble).join("")+'</div></div>'+
+    '<div class="cbar"><input id="mi" placeholder="Message…" onkeydown="if(event.key===\'Enter\')chatSend(\''+u+'\')"><button class="btn blue" style="flex:none;padding:8px 16px" onclick="chatSend(\''+u+'\')">Send</button></div>';
+    window.scrollTo(0,document.body.scrollHeight);refreshBadges();
+  }catch(e){fail(e)}
+}
+async function chatSend(u){
+  var i=$("mi"),v=i.value.trim();if(!v)return;i.value="";
+  try{
+    var m=await api("/messages/"+u,{body:{text:v}});
+    $("msgs").insertAdjacentHTML("beforeend",bubble(m));chatLen++;window.scrollTo(0,document.body.scrollHeight);
+  }catch(e){toast(e.message);i.value=v}
+}
+
+/* new messages / orders appear automatically (polls every 4 seconds) */
+setInterval(async function(){
+  if(!me||document.hidden)return;
+  try{
+    refreshBadges();
+    var v=window.view||"";
+    if(v.indexOf("chat:")===0){
+      var u=v.slice(5),msgs=await api("/messages/"+u);
+      if(window.view===v&&msgs.length!==chatLen&&$("msgs")){chatLen=msgs.length;$("msgs").innerHTML=msgs.map(bubble).join("");window.scrollTo(0,document.body.scrollHeight)}
+    }else if(v==="inbox")inboxPage(true);
+  }catch(e){}
+},4000);
+
+/* ============ START ============ */
+if(TOKEN){
+  api("/auth/me").then(function(d){me=d.user;enterApp()}).catch(function(){TOKEN="";localStorage.removeItem("ss_token");loginPage()});
+}else loginPage();
+
+</script>
+</body>
+</html>
